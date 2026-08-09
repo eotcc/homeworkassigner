@@ -3,146 +3,92 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign Document - Service Agreement</title>
-  <link rel="stylesheet" href="index.css">
+  <title>Tutoring Services Agreement</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
   <div class="card">
-    <!-- 1. Logo Header -->
+    <!-- 1. Academic Header -->
     <div class="header">
-      <img src="https://via.placeholder.com/180x60?text=Your+Logo+Here" alt="Company Logo" class="logo" id="companyLogo" />
-      <h2>Service Agreement</h2>
+      <div class="logo-badge">📚</div>
+      <h1>Tutoring Services Agreement</h1>
+      <p>Student & Parent Enrollment Agreement</p>
     </div>
 
-    <!-- 2. Agreement Statement Box -->
+    <!-- 2. Student & Guardian Information -->
+    <div class="form-row">
+      <div class="form-group">
+        <label for="studentName">Student Full Name *</label>
+        <input type="text" id="studentName" placeholder="e.g. Alex Johnson" required>
+      </div>
+      <div class="form-group">
+        <label for="guardianName">Parent / Guardian Name *</label>
+        <input type="text" id="guardianName" placeholder="e.g. Sarah Johnson" required>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="subject">Subject / Course *</label>
+        <input type="text" id="subject" placeholder="e.g. High School Mathematics" required>
+      </div>
+      <div class="form-group">
+        <label for="contactEmail">Email Address *</label>
+        <input type="email" id="contactEmail" placeholder="parent@example.com" required>
+      </div>
+    </div>
+
+    <!-- 3. Tutoring Policy Statement -->
     <div class="agreement-container">
-      <label><strong>Terms & Conditions:</strong></label>
+      <label><strong>Terms & Tutoring Policies:</strong></label>
       <div class="agreement-box">
-        <p><strong>ELECTRONIC RECORD AND SIGNATURE DISCLOSURE</strong></p>
-        <p>By proceeding, you agree to receive and execute this agreement electronically. You acknowledge that your hand-drawn electronic signature on this portal carries the same legal weight and enforceability as a handwritten signature under applicable electronic signature legislation (e.g., ESIGN Act / UETA).</p>
-        <p>You confirm that you have read, understood, and agreed to all terms, service conditions, and privacy practices specified in this document. Any unauthorized modification or falsification of identity during signing is strictly prohibited.</p>
+        <h4>1. Session Scheduling & Attendance</h4>
+        <p>Tutoring sessions will occur at the agreed scheduled time. Students are expected to arrive on time with all necessary materials, assignments, and study tools.</p>
+
+        <h4>2. Cancellation Policy</h4>
+        <p>Cancellations must be made at least <strong>24 hours prior</strong> to the scheduled session. Cancellations made with less than 24 hours' notice or missed sessions ("no-shows") will be billed at the full session rate.</p>
+
+        <h4>3. Academic Integrity</h4>
+        <p>Tutoring is designed to support learning, build critical skills, and enhance comprehension. The tutor will guide the student through course concepts, but will <strong>not complete homework assignments, tests, or graded projects</strong> on behalf of the student.</p>
+
+        <h4>4. Payment Terms</h4>
+        <p>Invoices are issued weekly or monthly according to your selected plan. Payment must be received prior to or on the day of the first session of each billing period.</p>
+
+        <h4>5. Electronic Signature Consent</h4>
+        <p>By signing below, you acknowledge that you have read, understood, and accept all terms set forth in this agreement. This electronic signature carries the same legal authority as a handwritten signature.</p>
       </div>
 
       <!-- Consent Checkbox -->
       <label class="checkbox-label">
         <input type="checkbox" id="agreeCheckbox" />
-        <span>I have read, understood, and agree to the terms and conditions set forth in this document.</span>
+        <span>I am the student or parent/guardian authorized to sign, and I agree to all tutoring policies above.</span>
       </label>
     </div>
 
-    <!-- 3. Signature Canvas -->
-    <label><strong>Draw Signature Below:</strong></label>
+    <!-- 4. Signature Canvas -->
+    <label><strong>Signature of Parent/Guardian or Student (if 18+):</strong></label>
     <div class="signature-container">
-      <canvas id="signatureCanvas" width="500" height="180"></canvas>
+      <canvas id="signatureCanvas" width="500" height="160"></canvas>
+      <span class="signature-hint">Sign inside the box</span>
     </div>
 
     <div class="button-group">
-      <button class="btn-clear" id="clearBtn">Clear</button>
-      <button class="btn-save" id="saveBtn">Accept & Submit Agreement</button>
+      <button class="btn-clear" id="clearBtn" type="button">Clear</button>
+      <button class="btn-save" id="saveBtn" type="button">Accept & Submit Agreement</button>
     </div>
 
     <div id="status"></div>
 
-    <!-- Preview Container -->
+    <!-- Submission Confirmation Preview -->
     <div class="preview" id="previewContainer" style="display: none;">
-      <h3>Captured Signature Output:</h3>
-      <img id="signatureImage" alt="Exported Signature" />
+      <h3>Signed Agreement Summary</h3>
+      <div class="preview-details" id="previewDetails"></div>
+      <label><strong>Captured Signature:</strong></label><br>
+      <img id="signatureImage" alt="Captured Signature" />
     </div>
   </div>
 
-  <script>
-    const canvas = document.getElementById('signatureCanvas');
-    const ctx = canvas.getContext('2d');
-    const clearBtn = document.getElementById('clearBtn');
-    const saveBtn = document.getElementById('saveBtn');
-    const agreeCheckbox = document.getElementById('agreeCheckbox');
-    const statusDiv = document.getElementById('status');
-    const previewContainer = document.getElementById('previewContainer');
-    const signatureImage = document.getElementById('signatureImage');
-
-    let isDrawing = false;
-    let hasSigned = false;
-
-    // Stroke styling settings
-    ctx.strokeStyle = '#000000';
-    ctx.lineWidth = 2.5;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-
-    function getPos(e) {
-      const rect = canvas.getBoundingClientRect();
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-      return { x: clientX - rect.left, y: clientY - rect.top };
-    }
-
-    function startDrawing(e) {
-      isDrawing = true;
-      hasSigned = true;
-      const pos = getPos(e);
-      ctx.beginPath();
-      ctx.moveTo(pos.x, pos.y);
-    }
-
-    function draw(e) {
-      if (!isDrawing) return;
-      e.preventDefault();
-      const pos = getPos(e);
-      ctx.lineTo(pos.x, pos.y);
-      ctx.stroke();
-    }
-
-    function stopDrawing() {
-      if (isDrawing) {
-        ctx.closePath();
-        isDrawing = false;
-      }
-    }
-
-    // Mouse Listeners
-    canvas.addEventListener('mousedown', startDrawing);
-    canvas.addEventListener('mousemove', draw);
-    canvas.addEventListener('mouseup', stopDrawing);
-
-    // Touch Listeners
-    canvas.addEventListener('touchstart', startDrawing);
-    canvas.addEventListener('touchmove', draw);
-    canvas.addEventListener('touchend', stopDrawing);
-
-    // Clear Canvas Action
-    clearBtn.addEventListener('click', () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      hasSigned = false;
-      statusDiv.textContent = '';
-      previewContainer.style.display = 'none';
-      signatureImage.src = '';
-    });
-
-    // Form Submission & Validation
-    saveBtn.addEventListener('click', () => {
-      if (!agreeCheckbox.checked) {
-        statusDiv.style.color = "red";
-        statusDiv.textContent = "You must agree to the terms and conditions before submitting.";
-        return;
-      }
-
-      if (!hasSigned) {
-        statusDiv.style.color = "red";
-        statusDiv.textContent = "Please draw your signature before submitting.";
-        return;
-      }
-
-      const base64DataUrl = canvas.toDataURL('image/png');
-
-      statusDiv.style.color = "green";
-      statusDiv.textContent = "Agreement accepted and signature captured successfully!";
-
-      signatureImage.src = base64DataUrl;
-      previewContainer.style.display = 'block';
-
-      console.log("Captured Base64 Signature Image:", base64DataUrl);
-    });
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
