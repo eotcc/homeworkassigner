@@ -1,0 +1,127 @@
+:root {
+  --primary-color: #0066cc;
+  --border-color: #cccccc;
+  --bg-gray: #f8f9fa;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  max-width: 600px;
+  margin: 30px auto;
+  padding: 0 20px;
+  color: #333333;
+}
+
+.card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  background: #ffffff;
+}
+
+/* Logo Header Styles */
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
+}
+
+.header img.logo {
+  max-height: 60px;
+  width: auto;
+  margin-bottom: 10px;
+}
+
+/* Agreement Statement Styles */
+.agreement-container {
+  margin-bottom: 20px;
+}
+
+.agreement-box {
+  height: 120px;
+  overflow-y: scroll;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 12px;
+  background-color: var(--bg-gray);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 12px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.checkbox-label input {
+  margin-top: 3px;
+  width: 18px;
+  height: 18px;
+}
+
+/* Signature Canvas Styles */
+.signature-container {
+  border: 2px dashed var(--border-color);
+  border-radius: 8px;
+  background-color: #ffffff;
+  margin-top: 10px;
+}
+
+canvas {
+  touch-action: none;
+  cursor: crosshair;
+  display: block;
+  width: 100%;
+}
+
+.button-group {
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
+}
+
+button {
+  padding: 10px 18px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-clear {
+  background-color: #f1f1f1;
+  border: 1px solid var(--border-color);
+}
+
+.btn-save {
+  background-color: var(--primary-color);
+  color: #ffffff;
+  border: none;
+  flex-grow: 1;
+}
+
+#status {
+  margin-top: 15px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.preview {
+  margin-top: 24px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.preview img {
+  border: 1px solid #dddddd;
+  padding: 8px;
+  background: #f9f9f9;
+  max-width: 100%;
+  margin-top: 10px;
+}
