@@ -3,80 +3,52 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Signature Canvas from Scratch</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 540px;
-      margin: 40px auto;
-      padding: 0 20px;
-    }
-
-    .signature-container {
-      border: 2px dashed #cccccc;
-      border-radius: 8px;
-      background-color: #ffffff;
-      display: inline-block;
-    }
-
-    canvas {
-      touch-action: none; /* Disables page scrolling while drawing on touch screens */
-      cursor: crosshair;
-      display: block;
-    }
-
-    .button-group {
-      margin-top: 12px;
-      display: flex;
-      gap: 10px;
-    }
-
-    button {
-      padding: 8px 16px;
-      border-radius: 4px;
-      font-size: 14px;
-      cursor: pointer;
-    }
-
-    .btn-clear {
-      background-color: #f1f1f1;
-      border: 1px solid #cccccc;
-    }
-
-    .btn-save {
-      background-color: #0066cc;
-      color: #ffffff;
-      border: none;
-    }
-
-    .preview {
-      margin-top: 24px;
-    }
-
-    .preview img {
-      border: 1px solid #dddddd;
-      padding: 8px;
-      background: #f9f9f9;
-      max-width: 100%;
-    }
-  </style>
+  <title>Sign Document - Service Agreement</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-  <h2>Signature Pad</h2>
-  
-  <div class="signature-container">
-    <canvas id="signatureCanvas" width="500" height="200"></canvas>
-  </div>
+  <div class="card">
+    <!-- 1. Logo Header -->
+    <div class="header">
+      <img src="https://via.placeholder.com/180x60?text=Your+Logo+Here" alt="Company Logo" class="logo" id="companyLogo" />
+      <h2>Service Agreement</h2>
+    </div>
 
-  <div class="button-group">
-    <button class="btn-clear" id="clearBtn">Clear</button>
-    <button class="btn-save" id="saveBtn">Capture Signature</button>
-  </div>
+    <!-- 2. Agreement Statement Box -->
+    <div class="agreement-container">
+      <label><strong>Terms & Conditions:</strong></label>
+      <div class="agreement-box">
+        <p><strong>ELECTRONIC RECORD AND SIGNATURE DISCLOSURE</strong></p>
+        <p>By proceeding, you agree to receive and execute this agreement electronically. You acknowledge that your hand-drawn electronic signature on this portal carries the same legal weight and enforceability as a handwritten signature under applicable electronic signature legislation (e.g., ESIGN Act / UETA).</p>
+        <p>You confirm that you have read, understood, and agreed to all terms, service conditions, and privacy practices specified in this document. Any unauthorized modification or falsification of identity during signing is strictly prohibited.</p>
+      </div>
 
-  <div class="preview" id="previewContainer" style="display: none;">
-    <h3>Exported Base64 Image:</h3>
-    <img id="signatureImage" alt="Exported Signature" />
+      <!-- Consent Checkbox -->
+      <label class="checkbox-label">
+        <input type="checkbox" id="agreeCheckbox" />
+        <span>I have read, understood, and agree to the terms and conditions set forth in this document.</span>
+      </label>
+    </div>
+
+    <!-- 3. Signature Canvas -->
+    <label><strong>Draw Signature Below:</strong></label>
+    <div class="signature-container">
+      <canvas id="signatureCanvas" width="500" height="180"></canvas>
+    </div>
+
+    <div class="button-group">
+      <button class="btn-clear" id="clearBtn">Clear</button>
+      <button class="btn-save" id="saveBtn">Accept & Submit Agreement</button>
+    </div>
+
+    <div id="status"></div>
+
+    <!-- Preview Container -->
+    <div class="preview" id="previewContainer" style="display: none;">
+      <h3>Captured Signature Output:</h3>
+      <img id="signatureImage" alt="Exported Signature" />
+    </div>
   </div>
 
   <script>
@@ -84,46 +56,43 @@
     const ctx = canvas.getContext('2d');
     const clearBtn = document.getElementById('clearBtn');
     const saveBtn = document.getElementById('saveBtn');
+    const agreeCheckbox = document.getElementById('agreeCheckbox');
+    const statusDiv = document.getElementById('status');
     const previewContainer = document.getElementById('previewContainer');
     const signatureImage = document.getElementById('signatureImage');
 
     let isDrawing = false;
+    let hasSigned = false;
 
-    // Line and stroke styling
+    // Stroke styling settings
     ctx.strokeStyle = '#000000';
     ctx.lineWidth = 2.5;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
 
-    // Get exact cursor/finger coordinates relative to the canvas
     function getPos(e) {
       const rect = canvas.getBoundingClientRect();
       const clientX = e.touches ? e.touches[0].clientX : e.clientX;
       const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-      return {
-        x: clientX - rect.left,
-        y: clientY - rect.top
-      };
+      return { x: clientX - rect.left, y: clientY - rect.top };
     }
 
-    // Start path
     function startDrawing(e) {
       isDrawing = true;
+      hasSigned = true;
       const pos = getPos(e);
       ctx.beginPath();
       ctx.moveTo(pos.x, pos.y);
     }
 
-    // Draw continuous path
     function draw(e) {
       if (!isDrawing) return;
-      e.preventDefault(); // Prevents touch drag behavior on mobile
+      e.preventDefault();
       const pos = getPos(e);
       ctx.lineTo(pos.x, pos.y);
       ctx.stroke();
     }
 
-    // End path
     function stopDrawing() {
       if (isDrawing) {
         ctx.closePath();
@@ -135,28 +104,44 @@
     canvas.addEventListener('mousedown', startDrawing);
     canvas.addEventListener('mousemove', draw);
     canvas.addEventListener('mouseup', stopDrawing);
-    canvas.addEventListener('mouseleave', stopDrawing);
 
-    // Touch Listeners (Mobile & Tablet)
+    // Touch Listeners
     canvas.addEventListener('touchstart', startDrawing);
     canvas.addEventListener('touchmove', draw);
     canvas.addEventListener('touchend', stopDrawing);
 
-    // Clear Canvas
+    // Clear Canvas Action
     clearBtn.addEventListener('click', () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      hasSigned = false;
+      statusDiv.textContent = '';
       previewContainer.style.display = 'none';
       signatureImage.src = '';
     });
 
-    // Export Canvas Content to Base64 String
+    // Form Submission & Validation
     saveBtn.addEventListener('click', () => {
-      const dataURL = canvas.toDataURL('image/png');
-      
-      signatureImage.src = dataURL;
+      if (!agreeCheckbox.checked) {
+        statusDiv.style.color = "red";
+        statusDiv.textContent = "You must agree to the terms and conditions before submitting.";
+        return;
+      }
+
+      if (!hasSigned) {
+        statusDiv.style.color = "red";
+        statusDiv.textContent = "Please draw your signature before submitting.";
+        return;
+      }
+
+      const base64DataUrl = canvas.toDataURL('image/png');
+
+      statusDiv.style.color = "green";
+      statusDiv.textContent = "Agreement accepted and signature captured successfully!";
+
+      signatureImage.src = base64DataUrl;
       previewContainer.style.display = 'block';
 
-      console.log('Captured Base64 Signature String:', dataURL);
+      console.log("Captured Base64 Signature Image:", base64DataUrl);
     });
   </script>
 </body>
