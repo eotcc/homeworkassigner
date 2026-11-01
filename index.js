@@ -27,7 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof lucide !== 'undefined') lucide.createIcons();
 });
 
-// Verify if Code or Name exists in `student_registrations`
 window.verifyStudent = async function(event) {
     event.preventDefault();
     const inputVal = document.getElementById('studentCodeInput').value.trim();
@@ -45,7 +44,6 @@ window.verifyStudent = async function(event) {
         querySnapshot.forEach((docSnap) => {
             const data = docSnap.data();
             
-            // Match against Code (id) or Full Name
             if (
                 (data.id && String(data.id).toUpperCase() === searchUpper) ||
                 (data.fullName && data.fullName.toUpperCase() === searchUpper) ||
@@ -61,8 +59,6 @@ window.verifyStudent = async function(event) {
         }
 
         currentStudent = matchedStudent;
-        
-        // Normalize ID to uppercase to prevent case-sensitive query issues
         currentStudent.normalizedId = String(currentStudent.id || '').toUpperCase();
 
         const studentName = currentStudent.fullName || `${currentStudent.firstName || ''} ${currentStudent.lastName || ''}`.trim() || 'Student';
@@ -86,7 +82,6 @@ window.verifyStudent = async function(event) {
     }
 };
 
-// Send message to Firebase
 window.sendStudentMessage = async function(event) {
     event.preventDefault();
     if (!currentStudent) return;
@@ -96,8 +91,10 @@ window.sendStudentMessage = async function(event) {
 
     if (!content) return;
 
+    const studentIdQuery = currentStudent.normalizedId || String(currentStudent.id || '').toUpperCase();
+
     const payload = {
-        id: currentStudent.normalizedId || String(currentStudent.id || '').toUpperCase(),
+        id: studentIdQuery,
         studentName: currentStudent.fullName || `${currentStudent.firstName || ''} ${currentStudent.lastName || ''}`.trim(),
         grade: currentStudent.grade || 'N/A',
         message: content,
@@ -116,7 +113,6 @@ window.sendStudentMessage = async function(event) {
     }
 };
 
-// Fetch ONLY messages for this student (privacy protected)
 async function fetchStudentMessages() {
     if (!currentStudent) return;
     const container = document.getElementById('student-messages-list');
