@@ -40,14 +40,14 @@ window.verifyStudent = async function(event) {
     try {
         const querySnapshot = await getDocs(collection(db, "student_registrations"));
         let matchedStudent = null;
+        const searchUpper = inputVal.toUpperCase();
 
         querySnapshot.forEach((docSnap) => {
             const data = docSnap.data();
-            const searchUpper = inputVal.toUpperCase();
             
             // Match against Code (id) or Full Name
             if (
-                (data.id && data.id.toUpperCase() === searchUpper) ||
+                (data.id && String(data.id).toUpperCase() === searchUpper) ||
                 (data.fullName && data.fullName.toUpperCase() === searchUpper) ||
                 (data.firstName && data.firstName.toUpperCase() === searchUpper)
             ) {
@@ -61,6 +61,10 @@ window.verifyStudent = async function(event) {
         }
 
         currentStudent = matchedStudent;
+        
+        // Normalize ID to uppercase to prevent case-sensitive query issues
+        currentStudent.normalizedId = String(currentStudent.id || '').toUpperCase();
+
         const studentName = currentStudent.fullName || `${currentStudent.firstName || ''} ${currentStudent.lastName || ''}`.trim() || 'Student';
 
         document.getElementById('display-student-name').innerText = studentName;
@@ -93,7 +97,7 @@ window.sendStudentMessage = async function(event) {
     if (!content) return;
 
     const payload = {
-        id: currentStudent.id,
+        id: currentStudent.normalizedId || String(currentStudent.id || '').toUpperCase(),
         studentName: currentStudent.fullName || `${currentStudent.firstName || ''} ${currentStudent.lastName || ''}`.trim(),
         grade: currentStudent.grade || 'N/A',
         message: content,
@@ -118,9 +122,10 @@ async function fetchStudentMessages() {
     const container = document.getElementById('student-messages-list');
 
     try {
+        const studentIdQuery = currentStudent.normalizedId || String(currentStudent.id || '').toUpperCase();
         const q = query(
             collection(db, "student_communications"),
-            where("id", "==", currentStudent.id)
+            where("id", "==", studentIdQuery)
         );
         const querySnapshot = await getDocs(q);
 
