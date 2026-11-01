@@ -1,4 +1,4 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-app.js";
 import {
     getFirestore,
     collection,
@@ -27,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof lucide !== 'undefined') lucide.createIcons();
 });
 
+// Verify matching ID or Name from `student_registrations`
 window.verifyStudent = async function(event) {
     event.preventDefault();
     const inputVal = document.getElementById('studentCodeInput').value.trim();
