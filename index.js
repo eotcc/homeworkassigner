@@ -9,13 +9,13 @@ import {
 } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyB3E6n_VRbeW0MfEvksjvLFTwvDmx0Jk9I",
-    authDomain: "nrdstut.firebaseapp.com",
-    projectId: "nrdstut",
-    storageBucket: "nrdstut.firebasestorage.app",
-    messagingSenderId: "4814258678",
-    appId: "1:4814258678:web:5f8ea96c5c930eb1c847d7",
-    measurementId: "G-NWWNY3VHP6"
+    apiKey: "AIzaSyAgggGVm5GM14pjeLhGUTGLQf7NFmuzon8",
+    authDomain: "agreement-545d5.firebaseapp.com",
+    projectId: "agreement-545d5",
+    storageBucket: "agreement-545d5.firebasestorage.app",
+    messagingSenderId: "13682199073",
+    appId: "1:13682199073:web:4a45f594a814f3a8f73160",
+    measurementId: "G-N0NCRCPRY9"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -27,13 +27,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof lucide !== 'undefined') lucide.createIcons();
 });
 
-// Verify matching ID or Name from `student_registrations`
+// Verify strictly by ID code in `student_registrations`
 window.verifyStudent = async function(event) {
     event.preventDefault();
     const inputVal = document.getElementById('studentCodeInput').value.trim();
 
     if (!inputVal) {
-        showToast("Please enter an ID code or name.", "error");
+        showToast("Please enter a student ID code.", "error");
         return;
     }
 
@@ -45,17 +45,14 @@ window.verifyStudent = async function(event) {
         querySnapshot.forEach((docSnap) => {
             const data = docSnap.data();
             
-            if (
-                (data.id && String(data.id).toUpperCase() === searchUpper) ||
-                (data.fullName && data.fullName.toUpperCase() === searchUpper) ||
-                (data.firstName && data.firstName.toUpperCase() === searchUpper)
-            ) {
+            // Match strictly against ID code
+            if (data.id && String(data.id).toUpperCase() === searchUpper) {
                 matchedStudent = { firestoreId: docSnap.id, ...data };
             }
         });
 
         if (!matchedStudent) {
-            showToast("Student code or name not found in database.", "error");
+            showToast("Student ID code not found in database.", "error");
             return;
         }
 
